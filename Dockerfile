@@ -1,7 +1,7 @@
 # DOCKER-VERSION 0.3.4
 # image olafradicke/centos7-icinga-check_km
 
-FROM centos:7
+FROM centos:centos7
 MAINTAINER Olaf Raicke <olaf@atix.de>
 
 ENV ICINGA_USER icinga
