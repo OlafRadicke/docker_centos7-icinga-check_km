@@ -7,6 +7,7 @@ MAINTAINER Olaf Raicke <olaf@atix.de>
 ENV ICINGA_USER icinga
 ENV ICINGA_PW icinga
 ENV ICINGA_CMD icinga-cmd
+ENV BUILD_DIR /tmp/
 
 RUN yum -y install wget
 RUN yum -y install httpd gcc glibc glibc-common gd gd-devel
@@ -20,36 +21,45 @@ RUN /usr/sbin/groupadd icinga-cmd
 RUN /usr/sbin/usermod -a -G icinga-cmd icinga
 RUN /usr/sbin/usermod -a -G icinga-cmd www-data
 
-WORKDIR  /usr/src
+# icinga
+WORKDIR  $BUILD_DIR
 RUM wget https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz
 RUN tar -xzf  v2.1.1.tar.gz
+WORKDIR  $BUILD_DIR/icinga2-2.1.1/
 RUN ./configure --with-command-group=$ICINGA_CMD --disable-idoutils
 RUN make all
+RUN make install
+# CentOS 7 has systemd
+# RUN make install-init
+RUN make install-config
+RUN make install-eventhandlers
+RUN make install-commandmode
+WORKDIR  $BUILD_DIR
+RUN rm -Rvf ./v2.1.1.tar.gz ./icinga2-2.1.1/
 
-
+# plugins
+WORKDIR  $BUILD_DIR
 RUM wget https://www.monitoring-plugins.org/download/monitoring-plugins-2.0.tar.gz
-RUN tar -xzf monitoring-plugins-2.0.tar.gz
+RUN tar -xzf ./monitoring-plugins-2.0.tar.gz
+WORKDIR  $BUILD_DIR/nagios-plugins-2.0
+RUN ./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-nagios-user=icinga --with-nagios-group=icinga
+RUN make
+RUN make install
+WORKDIR  $BUILD_DIR
+RUN rm -Rvf ./monitoring-plugins-2.0.tar.gz ./nagios-plugins-2.0
 
-WORKDIR  icinga2-2.1.1/
+RUN setenforce 0
+RUN chkconfig --add icinga
+RUN chkconfig icinga on
+# RUN service icinga start
+
+# check_mk
+RUN  yum -y install --nogpgcheck  https://mathias-kettner.de/download/check_mk-agent-1.2.4p5-1.noarch.rpm
 
 
+CMD ["service", "icinga start"]
+EXPOSE 22
 
-#########################
 
-RUN yum -y install gcc-c++ make wget
-RUN yum -y install libtool mysql++-devel sqlite-devel openssl-devel postgresql-devel
-
-WORKDIR /tmp
-RUN  wget www.tntnet.org/download/cxxtools-2.2.1.tar.gz
-RUN  tar -xzf  cxxtools-2.2.1.tar.gz
-WORKDIR /tmp/cxxtools-2.2.1
-RUN /usr/bin/ls -lah
-RUN  /bin/bash ./configure
-RUN  make
-RUN  make install
-
-RUN  echo "/usr/local/lib" >  /etc/ld.so.conf.d/cxxtools.conf
-RUN  ldconfig
-RUN  rm -Rvf /tmp/cxxtools-2.2.1.tar.gz /tmp/cxxtools-2.2.1
 
 VOLUME ["/var/docker/cxxtools/workspace/"]
