@@ -25,7 +25,9 @@ RUN /usr/sbin/usermod -a -G icinga-cmd apache
 # icinga
 WORKDIR  $BUILD_DIR
 RUM wget https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz
+RUN ls -lah
 RUN tar -xzf  v2.1.1.tar.gz
+RUN ls -lah
 WORKDIR  $BUILD_DIR/icinga2-2.1.1/
 RUN ./configure --with-command-group=$ICINGA_CMD --disable-idoutils
 RUN make all
@@ -41,7 +43,9 @@ RUN rm -Rvf ./v2.1.1.tar.gz ./icinga2-2.1.1/
 # plugins
 WORKDIR  $BUILD_DIR
 RUM wget https://www.monitoring-plugins.org/download/monitoring-plugins-2.0.tar.gz
+RUN ls -lah
 RUN tar -xzf ./monitoring-plugins-2.0.tar.gz
+RUN ls -lah
 WORKDIR  $BUILD_DIR/nagios-plugins-2.0
 RUN ./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-nagios-user=icinga --with-nagios-group=icinga
 RUN make
