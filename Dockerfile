@@ -10,7 +10,7 @@ ENV ICINGA_CMD icinga-cmd
 ENV BUILD_DIR /tmp/
 
 RUN yum -y update
-RUN yum -y install wget
+RUN yum -y install wget tar gzip
 RUN yum -y install httpd gcc glibc glibc-common gd gd-devel
 RUN yum -y install libjpeg libjpeg-devel libpng libpng-devel
 RUN yum -y install net-snmp net-snmp-devel net-snmp-utils
