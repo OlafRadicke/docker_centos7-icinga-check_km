@@ -9,6 +9,7 @@ ENV ICINGA_PW icinga
 ENV ICINGA_CMD icinga-cmd
 ENV BUILD_DIR /tmp/
 
+RUN yum -y update
 RUN yum -y install wget
 RUN yum -y install httpd gcc glibc glibc-common gd gd-devel
 RUN yum -y install libjpeg libjpeg-devel libpng libpng-devel
@@ -19,7 +20,7 @@ RUN  echo "$ICINGA_USER:$ICINGA_PW"|chpasswd
 
 RUN /usr/sbin/groupadd icinga-cmd
 RUN /usr/sbin/usermod -a -G icinga-cmd icinga
-RUN /usr/sbin/usermod -a -G icinga-cmd www-data
+RUN /usr/sbin/usermod -a -G icinga-cmd apache
 
 # icinga
 WORKDIR  $BUILD_DIR
