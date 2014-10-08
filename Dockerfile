@@ -30,9 +30,15 @@ RUN ls -lah
 RUN tar -xzf  v2.1.1.tar.gz
 RUN ls -lah
 WORKDIR  $BUILD_DIR/icinga2-2.1.1/
-RUN ./configure --with-command-group=$ICINGA_CMD --disable-idoutils
-RUN make all
+RUN mkdir build
+WORKDIR  $BUILD_DIR/icinga2-2.1.1/build
+RUN cmake .. -DICINGA2_GROUP=$ICINGA_CMD -DUSE_SYSTEMD=ON
+RUN make
 RUN make install
+
+#RUN ./configure --with-command-group=$ICINGA_CMD --disable-idoutils
+#RUN make all
+#RUN make install
 # CentOS 7 has systemd
 # RUN make install-init
 RUN make install-config
