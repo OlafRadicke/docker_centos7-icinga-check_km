@@ -30,6 +30,7 @@ RUN ls -lah
 RUN tar -xzf  v2.1.1.tar.gz
 RUN ls -lah
 WORKDIR  $BUILD_DIR/icinga2-2.1.1/
+RUN ls -lah
 RUN mkdir build
 WORKDIR  $BUILD_DIR/icinga2-2.1.1/build
 RUN cmake .. -DICINGA2_GROUP=$ICINGA_CMD -DUSE_SYSTEMD=ON
