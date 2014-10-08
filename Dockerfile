@@ -7,7 +7,7 @@ MAINTAINER Olaf Raicke <olaf@atix.de>
 ENV ICINGA_USER icinga
 ENV ICINGA_PW icinga
 ENV ICINGA_CMD icinga-cmd
-ENV BUILD_DIR /tmp/
+ENV BUILD_DIR /tmp
 
 RUN yum -y update
 RUN yum -y --setopt=tsflags=nodocs install wget tar gzip cmake
@@ -24,11 +24,13 @@ RUN /usr/sbin/usermod -a -G icinga-cmd icinga
 RUN /usr/sbin/usermod -a -G icinga-cmd apache
 
 # icinga
+RUN echo $BUILD_DIR
 WORKDIR  $BUILD_DIR
 RUN wget https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz
 RUN ls -lah
 RUN tar -xvzf  v2.1.1.tar.gz
 RUN ls -lah
+RUN ls -lah $BUILD_DIR/icinga2-2.1.1/
 WORKDIR  $BUILD_DIR/icinga2-2.1.1/
 RUN ls -lah
 RUN mkdir build
