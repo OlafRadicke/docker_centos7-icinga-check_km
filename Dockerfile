@@ -10,10 +10,11 @@ ENV ICINGA_CMD icinga-cmd
 ENV BUILD_DIR /tmp/
 
 RUN yum -y update
-RUN yum -y install wget tar gzip
-RUN yum -y install httpd gcc glibc glibc-common gd gd-devel
-RUN yum -y install libjpeg libjpeg-devel libpng libpng-devel
-RUN yum -y install net-snmp net-snmp-devel net-snmp-utils
+RUN yum -y --setopt=tsflags=nodocs install wget tar gzip
+RUN yum -y --setopt=tsflags=nodocs install httpd gcc glibc glibc-common gd gd-devel
+RUN yum -y --setopt=tsflags=nodocs install libjpeg libjpeg-devel libpng libpng-devel
+RUN yum -y --setopt=tsflags=nodocs install net-snmp net-snmp-devel net-snmp-utils
+RUN yum clean all
 
 RUN  /usr/sbin/useradd -m icinga
 RUN  echo "$ICINGA_USER:$ICINGA_PW"|chpasswd
@@ -24,7 +25,7 @@ RUN /usr/sbin/usermod -a -G icinga-cmd apache
 
 # icinga
 WORKDIR  $BUILD_DIR
-RUM wget https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz
+RUN wget https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz
 RUN ls -lah
 RUN tar -xzf  v2.1.1.tar.gz
 RUN ls -lah
@@ -42,7 +43,7 @@ RUN rm -Rvf ./v2.1.1.tar.gz ./icinga2-2.1.1/
 
 # plugins
 WORKDIR  $BUILD_DIR
-RUM wget https://www.monitoring-plugins.org/download/monitoring-plugins-2.0.tar.gz
+RUN wget https://www.monitoring-plugins.org/download/monitoring-plugins-2.0.tar.gz
 RUN ls -lah
 RUN tar -xzf ./monitoring-plugins-2.0.tar.gz
 RUN ls -lah
@@ -60,6 +61,7 @@ RUN chkconfig icinga on
 
 # check_mk
 RUN  yum -y install --nogpgcheck  https://mathias-kettner.de/download/check_mk-agent-1.2.4p5-1.noarch.rpm
+
 
 
 CMD ["service", "icinga start"]
