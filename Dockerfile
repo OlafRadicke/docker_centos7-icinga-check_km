@@ -10,7 +10,7 @@ ENV ICINGA_CMD icinga-cmd
 ENV BUILD_DIR /tmp
 
 RUN yum -y update
-RUN yum -y --setopt=tsflags=nodocs install wget tar gzip cmake
+RUN yum -y --setopt=tsflags=nodocs install wget tar gzip cmake make bison flex gcc-c++ boost
 RUN yum -y --setopt=tsflags=nodocs install httpd gcc glibc glibc-common gd gd-devel
 RUN yum -y --setopt=tsflags=nodocs install libjpeg libjpeg-devel libpng libpng-devel
 RUN yum -y --setopt=tsflags=nodocs install net-snmp net-snmp-devel net-snmp-utils
@@ -26,15 +26,17 @@ RUN /usr/sbin/usermod -a -G icinga-cmd apache
 # icinga
 RUN echo $BUILD_DIR
 WORKDIR  $BUILD_DIR
-RUN wget https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz
+RUN wget -v https://github.com/Icinga/icinga2/archive/v2.1.1.tar.gz -O $BUILD_DIR/v2.1.1.tar.gz
 RUN ls -lah
-RUN tar -xvzf  v2.1.1.tar.gz
+RUN tar -xvzf  $BUILD_DIR/v2.1.1.tar.gz
 RUN ls -lah
-RUN ls -lah $BUILD_DIR/icinga2-2.1.1/
-WORKDIR  $BUILD_DIR/icinga2-2.1.1/
+RUN ls -lah /
+WORKDIR  ./icinga2-2.1.1/
+RUN ls -lah
+
 RUN ls -lah
 RUN mkdir build
-WORKDIR  $BUILD_DIR/icinga2-2.1.1/build
+WORKDIR  ./build
 RUN cmake .. -DICINGA2_GROUP=$ICINGA_CMD -DUSE_SYSTEMD=ON
 RUN make
 RUN make install
@@ -56,7 +58,7 @@ RUN wget https://www.monitoring-plugins.org/download/monitoring-plugins-2.0.tar.
 RUN ls -lah
 RUN tar -xvzf ./monitoring-plugins-2.0.tar.gz
 RUN ls -lah
-WORKDIR  $BUILD_DIR/nagios-plugins-2.0
+WORKDIR  ./nagios-plugins-2.0
 RUN ./configure --prefix=/usr/local/icinga --with-cgiurl=/icinga/cgi-bin --with-nagios-user=icinga --with-nagios-group=icinga
 RUN make
 RUN make install
