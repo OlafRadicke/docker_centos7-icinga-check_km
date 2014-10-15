@@ -16,6 +16,8 @@ ENV ICINGA2_ERROR_LOG /var/log/icinga2/error.log
 ENV BUILD_DIR /tmp
 
 ADD ./scripts/start.sh /start.sh
+RUN chmod 755 /start.sh
+RUN ls -lah
 
 RUN yum -y update
 RUN yum -y --setopt=tsflags=nodocs install wget
