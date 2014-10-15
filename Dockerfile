@@ -46,6 +46,7 @@ VOLUME ["/root/.ssh:/var/docker-container/root-ssh"]
 EXPOSE 22
 EXPOSE 80
 
-CMD ["/bin/bash", "/start.sh"]
+ENTRYPOINT  ["/bin/bash"]
+CMD ["start.sh"]
 #ENTRYPOINT  ["/usr/sbin/icinga2"]
 #CMD ["--daemonize","--errorlog","/var/log/icinga2/error.log","--user","icinga","--group","icingacmd","/etc/icinga2/icinga.cfg"]
