@@ -28,7 +28,6 @@ RUN yum makecache
 RUN yum -y --setopt=tsflags=nodocs install icinga2 nagios-plugins-all
 
 
-RUN chmod 770 /opt/icinga2_start.sh
 RUN mkdir /var/run/icinga2/
 RUN chown $ICINGA2_USER.$ICINGA2_GROUP /var/run/icinga2/
 
