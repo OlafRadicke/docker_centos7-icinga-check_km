@@ -15,6 +15,8 @@ ENV ICINGA2_ERROR_LOG /var/log/icinga2/error.log
 
 ENV BUILD_DIR /tmp
 
+ADD ./scripts/start.sh /start.sh
+
 RUN yum -y update
 RUN yum -y --setopt=tsflags=nodocs install wget
 RUN yum -y --setopt=tsflags=nodocs install httpd gcc glibc glibc-common gd gd-devel
@@ -26,7 +28,6 @@ RUN wget http://packages.icinga.org/epel/ICINGA-release.repo -O /etc/yum.repos.d
 RUN yum makecache
 RUN yum -y --setopt=tsflags=nodocs install icinga2 nagios-plugins-all
 
-RUN echo "/usr/sbin/icinga2 -d -e $ICINGA2_ERROR_LOG -u $ICINGA2_USER  -g $ICINGA2_GROUP $ICINGA2_CONFIG_FILE && echo icinga is started... > /tmp/icinga.out" > /opt/icinga2_start.sh
 
 RUN chmod 770 /opt/icinga2_start.sh
 RUN mkdir /var/run/icinga2/
@@ -43,7 +44,8 @@ RUN  yum -y install --nogpgcheck  https://mathias-kettner.de/download/check_mk-a
 # for password less logins
 VOLUME ["/root/.ssh:/var/docker-container/root-ssh"]
 EXPOSE 22
+EXPOSE 80
 
-
-ENTRYPOINT  ["/usr/sbin/icinga2"]
-CMD ["--daemonize","--errorlog","/var/log/icinga2/error.log","--user","icinga","--group","icingacmd","/etc/icinga2/icinga.cfg"]
+CMD ["/bin/bash", "/start.sh"]
+#ENTRYPOINT  ["/usr/sbin/icinga2"]
+#CMD ["--daemonize","--errorlog","/var/log/icinga2/error.log","--user","icinga","--group","icingacmd","/etc/icinga2/icinga.cfg"]
